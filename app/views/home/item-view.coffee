@@ -5,3 +5,19 @@ module.exports = class ItemView extends View
   tagName: 'section'
   className: 'page'
   autoRender: yes
+
+  initialize: ->
+    $(window).on('resize', @resize)
+    super
+
+  resize: =>
+    @$el.height($('#page-container').height())
+
+  remove: ->
+    $(window).off('resize', @resize)
+    super
+
+  render: ->
+    super
+    @resize()
+
