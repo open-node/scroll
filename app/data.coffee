@@ -1,9 +1,3 @@
-module.exports = [{
-  id: 1
-  logo: './images/haha.jgp'
-  text: 'Number 1'
-}, {
-  id: 2
-  logo: './images/haha.jgp'
-  text: 'Number 2'
-}]
+module.exports = _.map [1..4], (x) ->
+  logo: "./data/#{x}.jpg"
+  text: "Number #{x}."
