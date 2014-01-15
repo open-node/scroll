@@ -7,23 +7,28 @@ module.exports = class ListView extends Chaplin.CollectionView
   autoRender: yes
   itemView: ItemView
   className: 'list'
+  scrolling: no
   containerMethod: 'append'
   animationStartClass: no
   events:
     "click": "keyup"
 
+  stop: ->
+    tween.stop()
+    @scrolling = no
+
   keyup: (e) ->
-    return if e.charCode in [13, 27, 9]
+    return @stop() if @scrolling is yes
     $el = @$el
     height = @$el.parent().height()
-    length = @subviews.length
+    DurationPerOne = 50
+    length = @subviews.length - 1
     init = ->
       tween = new TWEEN.Tween({x: 0})
-        .to({x: -height * (length - 1)}, 100 * length)
-        .repeat(3000)
+        .to({x: -height * length}, DurationPerOne * length)
+        .repeat(Infinity)
         .onUpdate(-> $el.offset(top: @x))
         .start()
-      debugger
 
     animate = ->
       requestAnimationFrame(animate)
@@ -31,5 +36,6 @@ module.exports = class ListView extends Chaplin.CollectionView
 
     init()
     animate()
+    @scrolling = yes
 
 
