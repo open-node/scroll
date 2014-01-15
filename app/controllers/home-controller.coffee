@@ -13,4 +13,5 @@ module.exports = class HomeController extends Controller
   index: ->
     listView = new ListView
       collection: new Collection data
+      container: $('#page-container')
 
