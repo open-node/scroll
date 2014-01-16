@@ -26,12 +26,15 @@ module.exports = class ListView extends Chaplin.CollectionView
     # 停下来
     $el = @$el
     height = @$el.parent().height()
+    length = @subviews.length - 1
     top = $el.position().top
     mod = Math.abs top % height
-    $el.offset(top: top - height + mod)
+    finish = top - height + mod
+    finish = height * length if finish > height * length
+    $el.offset(top: finish)
 
   keyup: (e) =>
-    return if e.keyCode in [82, 91]
+    return if e.keyCode in [13, 82, 91]
     return @stop() if @scrolling is yes
     @collection.models = _.shuffle @collection.models
     @renderAllItems()

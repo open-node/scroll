@@ -1,3 +1,4 @@
-module.exports = _.map [1..33], (x) ->
-  logo: "./data/#{x}.jpg"
-  text: "Number #{x}."
+module.exports = (num) ->
+  _.shuffle _.map [1..num], (x) ->
+    logo: "./data/#{x}.jpg"
+    text: "Number #{x}."
