@@ -3,7 +3,7 @@ HeaderView      = require 'views/home/header-view'
 HomePageView    = require 'views/home/home-page-view'
 Collection      = require 'models/base/collection'
 ListView        = require 'views/home/list-view'
-data            = require 'data'
+data            = _.shuffle require 'data'
 
 module.exports = class HomeController extends Controller
   beforeAction: ->
