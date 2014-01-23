@@ -11,8 +11,7 @@ module.exports = class HomeController extends Controller
     @compose 'header', HeaderView, region: 'header'
 
   index: (params, route, option) ->
-    console.log params
-    listView = new ListView
+    new ListView
       collection: new Collection data +params.num or 10
       container: $('#page-container')
 
