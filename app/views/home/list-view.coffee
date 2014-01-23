@@ -42,11 +42,10 @@ module.exports = class ListView extends CollectionView
         .onUpdate(-> $el.offset(top: @x))
         .start()
       if endTop is -height * length
-        $el.offset(top: 0)
-        startTop = 0
+        endTop = 0
       else
         startTop = endTop
-      endTop = startTop - height
+        endTop = startTop - height
 
     animate = ->
       requestAnimationFrame(animate)
