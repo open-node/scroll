@@ -2,6 +2,7 @@ CollectionView        = require 'views/base/collection-view'
 ItemView              = require './item-view'
 
 tween = null
+playInt = null
 
 module.exports = class ListView extends CollectionView
   template: require './templates/list'
@@ -26,28 +27,35 @@ module.exports = class ListView extends CollectionView
   slowShow: (e) ->
     $el = @$el
     e.stopPropagation()
+    $(e.currentTarget).toggleClass "active"
     @isSlowShow = not @isSlowShow
-    if not @isSlowShow
-      tween.stop()
-      @stopAfter()
-      return
+    return clearInterval(playInt) if not @isSlowShow
     # 单页滚动的时间, 单位毫秒
     length = @subviews.length - 1
     height = @$el.parent().height()
-    DurationPerOne = 2000
+    DurationPerOne = 100
+    startTop = 0
+    endTop = -height
     init = ->
-      tween = new TWEEN.Tween({x: 0})
-        .to({x: -height * length}, DurationPerOne * length)
-        .repeat(Infinity)
+      tween = new TWEEN.Tween({x: startTop})
+        .to({x: endTop}, DurationPerOne)
+        .easing(TWEEN.Easing.Circular.Out)
         .onUpdate(-> $el.offset(top: @x))
         .start()
+      if endTop is -height * length
+        endTop = 0
+      else
+        startTop = endTop
+        endTop = startTop - height
 
     animate = ->
       requestAnimationFrame(animate)
       TWEEN.update()
 
-    init()
-    animate()
+    playInt = setInterval ->
+      init()
+      animate()
+    , 1000
 
   initialize: ->
     $(document).on 'keyup', @keyup
