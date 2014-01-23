@@ -11,16 +11,15 @@ module.exports = class ItemView extends View
 
   cancel: (e) ->
     e.stopPropagation()
-    @$el.parents('.list').removeClass('stop')
+    @$el.parents('.stop').removeClass('stop')
 
   enter: (e) ->
-    debugger
     e.stopPropagation()
     list = _.uniq (localStorage.getItem('list') or '').split(',')
     list = _.filter(list, (x) -> x)
     list.push @model.id
     localStorage.setItem('list', list.join(','))
-    @$el.parents('.list').removeClass('stop')
+    @$el.parents('.stop').removeClass('stop')
     @model.collection.remove @model
 
   initialize: ->

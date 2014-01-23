@@ -1,17 +1,53 @@
+CollectionView        = require 'views/base/collection-view'
 ItemView              = require './item-view'
 
 tween = null
 
-module.exports = class ListView extends Chaplin.CollectionView
+module.exports = class ListView extends CollectionView
   template: require './templates/list'
   autoRender: yes
   itemView: ItemView
-  className: 'list'
+  listSelector: "div.list"
+
   scrolling: no
   containerMethod: 'append'
   animationStartClass: no
   events:
     "click": "keyup"
+    "click .btn.init": "initScroll"
+    "click .btn.slow-show": "slowShow"
+
+  # 初始化抽奖数据，主要是清空localStorage
+  initScroll: (e) ->
+    e.stopPropagation()
+    localStorage.setItem 'list', ''
+
+  # 慢速度播放所有图片
+  slowShow: (e) ->
+    $el = @$el
+    e.stopPropagation()
+    @isSlowShow = not @isSlowShow
+    if not @isSlowShow
+      tween.stop()
+      @stopAfter()
+      return
+    # 单页滚动的时间, 单位毫秒
+    length = @subviews.length - 1
+    height = @$el.parent().height()
+    DurationPerOne = 2000
+    init = ->
+      tween = new TWEEN.Tween({x: 0})
+        .to({x: -height * length}, DurationPerOne * length)
+        .repeat(Infinity)
+        .onUpdate(-> $el.offset(top: @x))
+        .start()
+
+    animate = ->
+      requestAnimationFrame(animate)
+      TWEEN.update()
+
+    init()
+    animate()
 
   initialize: ->
     $(document).on 'keyup', @keyup
@@ -29,6 +65,10 @@ module.exports = class ListView extends Chaplin.CollectionView
 
     # 添加stop样式，让中奖后的操作按钮出现
     $el.addClass "stop"
+    @stopAfter()
+
+  stopAfter: =>
+    $el = @$el
 
     height = @$el.parent().height()
     length = @subviews.length - 1
@@ -41,7 +81,9 @@ module.exports = class ListView extends Chaplin.CollectionView
   keyup: (e) =>
     me = @
     $el = @$el
-    height = @$el.parent().height()
+
+    # 慢速播放中，不能抽奖，请先切换状态
+    return if @isSlowShow
 
     # 中奖了需要先处理中奖
     return if $el.hasClass "stop"
@@ -57,6 +99,8 @@ module.exports = class ListView extends Chaplin.CollectionView
     # 单页滚动的时间, 单位毫秒
     DurationPerOne = 50
     length = @subviews.length - 1
+    height = $el.parent().height()
+
     init = ->
       tween = new TWEEN.Tween({x: 0})
         .to({x: -height * length}, DurationPerOne * length)
@@ -72,5 +116,3 @@ module.exports = class ListView extends Chaplin.CollectionView
     init()
     animate()
     @scrolling = yes
-
-
