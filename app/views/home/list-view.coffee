@@ -33,20 +33,20 @@ module.exports = class ListView extends CollectionView
     # 单页滚动的时间, 单位毫秒
     length = @subviews.length - 1
     height = @$el.parent().height()
-    DurationPerOne = 100
+    DurationPerOne = 400
     startTop = 0
     endTop = -height
     init = ->
       tween = new TWEEN.Tween({x: startTop})
         .to({x: endTop}, DurationPerOne)
-        .easing(TWEEN.Easing.Circular.Out)
         .onUpdate(-> $el.offset(top: @x))
         .start()
       if endTop is -height * length
-        endTop = 0
+        $el.offset(top: 0)
+        startTop = 0
       else
         startTop = endTop
-        endTop = startTop - height
+      endTop = startTop - height
 
     animate = ->
       requestAnimationFrame(animate)
@@ -55,7 +55,7 @@ module.exports = class ListView extends CollectionView
     playInt = setInterval ->
       init()
       animate()
-    , 1000
+    , 2000
 
   initialize: ->
     $(document).on 'keyup', @keyup
